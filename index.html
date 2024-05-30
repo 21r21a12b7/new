@@ -112,7 +112,7 @@
         var map = L.map('map', {
             zoomControl: false,
             attributionControl: false
-        }).setView([17.244314, 80.137088], 16);
+        }).setView([0,0], 16);
 
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -157,14 +157,16 @@
                     popupAnchor: [0, -32]
                 });
 
-                // Add custom markers for the first, last, specific coordinates, and bus
-                var startMarker = L.marker(coordinates[0], { icon: startIcon }).addTo(map);
-                var endMarker = L.marker(coordinates[coordinates.length - 1], { icon: endIcon }).addTo(map);
-                var myStopMarker = L.marker(coordinates[8], { icon: myStopIcon }).addTo(map); // Using a specific coordinate for myStop
-
                 // Define the bus location (replace with actual bus location coordinates)
                 var busLocation = coordinates[3];
 
+                // Define the mystop location
+                var mystoplocation = coordinates[8];
+
+                // Add custom markers for the first, last, specific coordinates, and bus
+                var startMarker = L.marker(coordinates[0], { icon: startIcon }).addTo(map);
+                var endMarker = L.marker(coordinates[coordinates.length - 1], { icon: endIcon }).addTo(map);
+                var myStopMarker = L.marker(mystoplocation, { icon: myStopIcon }).addTo(map); // Using a specific coordinate for myStop
                 // Add bus marker
                 var busMarker = L.marker(busLocation, { icon: busIcon }).addTo(map);
 
@@ -172,7 +174,7 @@
                 map.fitBounds(polyline.getBounds(), { padding: [15, 15] });
 
                 // Calculate distance and time between busLocation and myStop
-                var distance = calculateDistance(busLocation[0], busLocation[1], coordinates[8][0], coordinates[8][1]);
+                var distance = calculateDistance(busLocation[0], busLocation[1], mystoplocation[0], mystoplocation[1]);
                 document.getElementById('distance').innerText = distance + ' km';
 
                 var speed = 10; // Speed in km/h
