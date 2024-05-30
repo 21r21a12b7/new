@@ -13,59 +13,22 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            /* Prevent any scrolling */
+            display: flex;
+            flex-direction: column;
         }
 
-        #map {
-            height: calc(100vh - 60px);
-            /* Adjust the height by subtracting the margin from the total viewport height */
+        #top-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             width: 100vw;
-            margin-top: 60px;
-            /* Leave 50px space at the top */
-            box-sizing: border-box;
-            /* Ensure padding and border are included in the element's total width and height */
-        }
-
-        #refresh-button,
-        #back-button,
-        #bus-button {
-            position: absolute;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            z-index: 1000;
-            /* Ensure buttons appear above the map */
-        }
-
-        #refresh-button {
-            top: 10px;
-            right: 10px;
-        }
-
-        #back-button {
-            top: 10px;
-            left: 10px;
-        }
-
-        #bus-button {
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            border-radius: 50%;
             padding: 10px;
-            border: 1px solid black;
-            /* Add a black border */
+            box-sizing: border-box;
         }
 
         #info-panel {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
             display: flex;
             align-items: center;
-            z-index: 1000;
-            /* Ensure the panel appears above the map */
         }
 
         .info-item {
@@ -74,9 +37,7 @@
             margin: 0 10px;
             padding: 5px;
             border: 1px solid black;
-            /* Add a black border */
             border-radius: 5px;
-            /* Optional: Add border radius for rounded corners */
         }
 
         .info-item img {
@@ -85,32 +46,66 @@
             margin-right: 5px;
         }
 
-        .info-item span {
-            /* white-space: nowrap; */
-            /* Prevent text from wrapping */
+        .info-item span {}
+
+        #refresh-button,
+        #back-button {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+
+        #map-section {
+            flex-grow: 1;
+            position: relative;
+            width: 100vw;
+            display: flex;
+        }
+
+        #map {
+            flex-grow: 1;
+            height: 100%;
+        }
+
+        #bus-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 50%;
+            padding: 10px;
+            border: 1px solid black;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            z-index: 1000;
         }
     </style>
 </head>
 
 <body>
-    <div id="info-panel">
-        <div class="info-item">
-            <img src="distance.png" alt="Distance">
-            <span id="distance">30.55 km</span>
+    <div id="top-section">
+        <img id="back-button" src="leftArrow.png" alt="Back">
+        <div id="info-panel">
+            <div class="info-item">
+                <img src="distance.png" alt="Distance">
+                <span id="distance">30.55 km</span>
+            </div>
+            <div class="info-item">
+                <img src="time.png" alt="Time">
+                <span id="time">2hr 5min</span>
+            </div>
+            <div class="info-item">
+                <img src="speed.png" alt="Speed">
+                <span id="speed">30 km/h</span>
+            </div>
         </div>
-        <div class="info-item">
-            <img src="time.png" alt="Time">
-            <span id="time">2hr 5min</span>
-        </div>
-        <div class="info-item">
-            <img src="speed.png" alt="Speed">
-            <span id="speed">30 km/h</span>
-        </div>
+        <img id="refresh-button" src="refresh.png" alt="Refresh">
     </div>
-    <img id="refresh-button" src="refresh.png" alt="Refresh">
-    <img id="back-button" src="leftArrow.png" alt="Back">
-    <div id="map"></div>
-    <img id="bus-button" src="bus.png" alt="Bus">
+    <div id="map-section">
+        <div id="map"></div>
+        <img id="bus-button" src="bus.png" alt="Bus">
+    </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
         // Initialize the map with no zoom control and no attribution control
@@ -145,7 +140,7 @@
         ];
 
         // myStop co-ordinates
-        var mystop = [17.244027, 80.132636]; 
+        var mystop = [17.244027, 80.132636];
 
         // Draw the polyline
         var polyline = L.polyline(coordinates, { color: 'black' }).addTo(map);
@@ -203,8 +198,7 @@
             var a =
                 Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                 Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2)
-                ;
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             var d = R * c; // Distance in km
             return d.toFixed(2);
@@ -224,7 +218,7 @@
 
         // Add click event listener to the refresh button
         document.getElementById('refresh-button').addEventListener('click', function () {
-            location.reload(); // Refresh the page 
+            location.reload(); // Refresh the page
         });
 
         // Add click event listener to the back button
