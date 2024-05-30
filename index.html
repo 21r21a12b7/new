@@ -96,15 +96,15 @@
     <div id="info-panel">
         <div class="info-item">
             <img src="distance.png" alt="Distance">
-            <span id="distance">30.55 km</span>
+            <span id="distance"></span>
         </div>
         <div class="info-item">
             <img src="time.png" alt="Time">
-            <span id="time">2hr 5min</span>
+            <span id="time"></span>
         </div>
         <div class="info-item">
             <img src="speed.png" alt="Speed">
-            <span id="speed">30 km/h</span>
+            <span id="speed"></span>
         </div>
     </div>
     <img id="refresh-button" src="refresh.png" alt="Refresh">
@@ -144,8 +144,8 @@
             [17.242510, 80.130293]
         ];
 
-        // myStop co-ordinates
-        var mystop = [17.244027, 80.132636]; 
+        // myStop coordinates
+        var mystop = [17.244027, 80.132636];
 
         // Draw the polyline
         var polyline = L.polyline(coordinates, { color: 'black' }).addTo(map);
@@ -174,10 +174,19 @@
             popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
         });
 
-        // Add custom markers for the first, last, and specific coordinates
+        // Custom icon for bus (busMain.png)
+        var busIcon = L.icon({
+            iconUrl: 'busMain.png',
+            iconSize: [32, 32], // size of the icon
+            iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Add custom markers for the first, last, myStop, and bus coordinates
         var startMarker = L.marker(coordinates[0], { icon: startIcon }).addTo(map);
         var endMarker = L.marker(coordinates[coordinates.length - 1], { icon: endIcon }).addTo(map);
-        var myStopMarker = L.marker([17.244027, 80.132636], { icon: myStopIcon }).addTo(map);
+        var myStopMarker = L.marker(mystop, { icon: myStopIcon }).addTo(map);
+        var busMarker = L.marker(coordinates[1], { icon: busIcon }).addTo(map);
 
         // Fit the map to the polyline bounds
         map.fitBounds(polyline.getBounds());
@@ -195,6 +204,14 @@
             map.setView(mystop, 20);
         });
 
+        busMarker.on('click', function () {
+            map.setView(coordinates[0], 20);
+        });
+
+        // Speed variable
+        var speed = 30; // Speed in km/h
+        document.getElementById('speed').innerText = speed + ' km/h';
+
         // Calculate distance between two points
         function calculateDistance(lat1, lon1, lat2, lon2) {
             var R = 6371; // Radius of the earth in km
@@ -203,28 +220,32 @@
             var a =
                 Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                 Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2)
-                ;
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             var d = R * c; // Distance in km
             return d.toFixed(2);
         }
 
         function deg2rad(deg) {
-            return deg * (Math.PI / 180)
+            return deg * (Math.PI / 180);
         }
 
-        // Calculate distance between mystop and coordinates[0]
-        var distance = calculateDistance(mystop[0], mystop[1], coordinates[0][0], coordinates[0][1]);
-        document.getElementById('distance').innerText = distance + ' km';
+        // Function to update distance and time
+        function updateDistanceAndTime() {
+            var distance = calculateDistance(busMarker.getLatLng().lat, busMarker.getLatLng().lng, mystop[0], mystop[1]);
+            document.getElementById('distance').innerText = distance + ' km';
 
-        // Calculate time taken from coordinates[0] to mystop at 30 km/h
-        var time = (distance / 30) * 60; // Time in minutes
-        document.getElementById('time').innerText = time.toFixed(2) + ' min';
+            // Calculate time taken from busMarker to mystop at the current speed
+            var time = (distance / speed) * 60; // Time in minutes
+            document.getElementById('time').innerText = time.toFixed(2) + ' min';
+        }
+
+        // Initial update of distance and time
+        updateDistanceAndTime();
 
         // Add click event listener to the refresh button
         document.getElementById('refresh-button').addEventListener('click', function () {
-            location.reload(); // Refresh the page 
+            location.reload(); // Refresh the page
         });
 
         // Add click event listener to the back button
@@ -236,6 +257,18 @@
         document.getElementById('bus-button').addEventListener('click', function () {
             alert('Bus button clicked!');
         });
+
+        // Optional: Add functionality to change speed dynamically
+        // Example:
+        // var speedInput = document.createElement('input');
+        // speedInput.type = 'number';
+        // speedInput.value = speed;
+        // speedInput.addEventListener('input', function(event) {
+        //     speed = event.target.value;
+        //     document.getElementById('speed').innerText = speed + ' km/h';
+        //     updateDistanceAndTime();
+        // });
+        // document.body.appendChild(speedInput);
     </script>
 </body>
 
