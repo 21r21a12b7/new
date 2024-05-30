@@ -24,6 +24,8 @@
             /* Leave 50px space at the top */
             box-sizing: border-box;
             /* Ensure padding and border are included in the element's total width and height */
+            z-index: 1;
+            /* Set z-index to be below the info-panel */
         }
 
         #refresh-button,
@@ -64,7 +66,7 @@
             transform: translateX(-50%);
             display: flex;
             align-items: center;
-            z-index: 1000;
+            z-index: 1001;
             /* Ensure the panel appears above the map */
         }
 
@@ -77,6 +79,7 @@
             /* Add a black border */
             border-radius: 5px;
             /* Optional: Add border radius for rounded corners */
+            background-color: white;
         }
 
         .info-item img {
