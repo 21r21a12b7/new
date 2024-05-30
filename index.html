@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>OpenStreetMap with Leaflet</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            /* Prevent any scrolling */
+        }
+
+        #map {
+            height: calc(100vh - 60px);
+            /* Adjust the height by subtracting the margin from the total viewport height */
+            width: 100vw;
+            margin-top: 60px;
+            /* Leave 50px space at the top */
+            box-sizing: border-box;
+            /* Ensure padding and border are included in the element's total width and height */
+        }
+
+        #refresh-button,
+        #back-button,
+        #bus-button {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            z-index: 1000;
+            /* Ensure buttons appear above the map */
+        }
+
+        #refresh-button {
+            top: 10px;
+            right: 10px;
+        }
+
+        #back-button {
+            top: 10px;
+            left: 10px;
+        }
+
+        #bus-button {
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 50%;
+            padding: 10px;
+            border: 1px solid black;
+            /* Add a black border */
+        }
+
+        #info-panel {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            z-index: 1000;
+            /* Ensure the panel appears above the map */
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin: 0 10px;
+            padding: 5px;
+            border: 1px solid black;
+            /* Add a black border */
+            border-radius: 5px;
+            /* Optional: Add border radius for rounded corners */
+        }
+
+        .info-item img {
+            width: 25px;
+            height: 25px;
+            margin-right: 5px;
+        }
+
+        .info-item span {
+            /* white-space: nowrap; */
+            /* Prevent text from wrapping */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="info-panel">
+        <div class="info-item">
+            <img src="distance.png" alt="Distance">
+            <span id="distance">30.55 km</span>
+        </div>
+        <div class="info-item">
+            <img src="time.png" alt="Time">
+            <span id="time">2hr 5min</span>
+        </div>
+        <div class="info-item">
+            <img src="speed.png" alt="Speed">
+            <span id="speed">30 km/h</span>
+        </div>
+    </div>
+    <img id="refresh-button" src="refresh.png" alt="Refresh">
+    <img id="back-button" src="leftArrow.png" alt="Back">
+    <div id="map"></div>
+    <img id="bus-button" src="bus.png" alt="Bus">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        // Initialize the map with no zoom control and no attribution control
+        var map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([17.244314, 80.137088], 16);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // Define coordinates
+        var coordinates = [
+            [17.244314, 80.137088],
+            [17.244703, 80.137046],
+            [17.244911, 80.135846],
+            [17.245685, 80.135747],
+            [17.245676, 80.135211],
+            [17.245581, 80.134253],
+            [17.245028, 80.133631],
+            [17.243982, 80.133674],
+            [17.244027, 80.132636],
+            [17.244050, 80.132413],
+            [17.243529, 80.132133],
+            [17.243321, 80.132142],
+            [17.243266, 80.131810],
+            [17.243280, 80.130933],
+            [17.243271, 80.130321],
+            [17.242510, 80.130293]
+        ];
+
+        // myStop co-ordinates
+        var mystop = [17.244027, 80.132636]; 
+
+        // Draw the polyline
+        var polyline = L.polyline(coordinates, { color: 'black' }).addTo(map);
+
+        // Custom icon for the first coordinate (flag.png)
+        var startIcon = L.icon({
+            iconUrl: 'flag.png',
+            iconSize: [32, 32], // size of the icon
+            iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Custom icon for the last coordinate (college.png)
+        var endIcon = L.icon({
+            iconUrl: 'college.png',
+            iconSize: [32, 32], // size of the icon
+            iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Custom icon for myStop (myStop.png)
+        var myStopIcon = L.icon({
+            iconUrl: 'myStop.png',
+            iconSize: [32, 32], // size of the icon
+            iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
+            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+        });
+
+        // Add custom markers for the first, last, and specific coordinates
+        var startMarker = L.marker(coordinates[0], { icon: startIcon }).addTo(map);
+        var endMarker = L.marker(coordinates[coordinates.length - 1], { icon: endIcon }).addTo(map);
+        var myStopMarker = L.marker([17.244027, 80.132636], { icon: myStopIcon }).addTo(map);
+
+        // Fit the map to the polyline bounds
+        map.fitBounds(polyline.getBounds());
+
+        // Add click event listeners to center the map on the marker when clicked
+        startMarker.on('click', function () {
+            map.setView(coordinates[0], 20);
+        });
+
+        endMarker.on('click', function () {
+            map.setView(coordinates[coordinates.length - 1], 20);
+        });
+
+        myStopMarker.on('click', function () {
+            map.setView(mystop, 20);
+        });
+
+        // Calculate distance between two points
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            var R = 6371; // Radius of the earth in km
+            var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+            var dLon = deg2rad(lon2 - lon1);
+            var a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2)
+                ;
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var d = R * c; // Distance in km
+            return d.toFixed(2);
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180)
+        }
+
+        // Calculate distance between mystop and coordinates[0]
+        var distance = calculateDistance(mystop[0], mystop[1], coordinates[0][0], coordinates[0][1]);
+        document.getElementById('distance').innerText = distance + ' km';
+
+        // Calculate time taken from coordinates[0] to mystop at 30 km/h
+        var time = (distance / 30) * 60; // Time in minutes
+        document.getElementById('time').innerText = time.toFixed(2) + ' min';
+
+        // Add click event listener to the refresh button
+        document.getElementById('refresh-button').addEventListener('click', function () {
+            location.reload(); // Refresh the page 
+        });
+
+        // Add click event listener to the back button
+        document.getElementById('back-button').addEventListener('click', function () {
+            window.history.back(); // Go to the previous page
+        });
+
+        // Add click event listener to the bus button (add desired functionality here)
+        document.getElementById('bus-button').addEventListener('click', function () {
+            alert('Bus button clicked!');
+        });
+    </script>
+</body>
+
+</html>
