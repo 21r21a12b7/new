@@ -85,26 +85,26 @@
 
 <body>
     <div id="top-section">
-        <img id="back-button" src="leftArrow.png" alt="Back">
+        <img id="back-button" src="img/leftArrow.png" alt="Back">
         <div id="info-panel">
             <div class="info-item">
-                <img src="distance.png" alt="Distance">
+                <img src="img/distance.png" alt="Distance">
                 <span id="distance">30.55 km</span>
             </div>
             <div class="info-item">
-                <img src="time.png" alt="Time">
+                <img src="img/time.png" alt="Time">
                 <span id="time">2hr 5min</span>
             </div>
             <div class="info-item">
-                <img src="speed.png" alt="Speed">
+                <img src="img/speed.png" alt="Speed">
                 <span id="speed">30 km/h</span>
             </div>
         </div>
-        <img id="refresh-button" src="refresh.png" alt="Refresh">
+        <img id="refresh-button" src="img/refresh.png" alt="Refresh">
     </div>
     <div id="map-section">
         <div id="map"></div>
-        <img id="bus-button" src="bus.png" alt="Bus">
+        <img id="bus-button" src="img/bus.png" alt="Bus">
     </div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
@@ -147,28 +147,28 @@
 
         // Custom icons
         var startIcon = L.icon({
-            iconUrl: 'flag.png',
+            iconUrl: 'img/flag.png',
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
         });
 
         var endIcon = L.icon({
-            iconUrl: 'college.png',
+            iconUrl: 'img/college.png',
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
         });
 
         var myStopIcon = L.icon({
-            iconUrl: 'myStop.png',
+            iconUrl: 'img/myStop.png',
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
         });
 
         var busIcon = L.icon({
-            iconUrl: 'busMain.png',
+            iconUrl: 'img/busMain.png',
             iconSize: [32, 32],
             iconAnchor: [16, 32],
             popupAnchor: [0, -32]
