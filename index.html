@@ -145,37 +145,51 @@
         // Draw the polyline
         var polyline = L.polyline(coordinates, { color: 'black' }).addTo(map);
 
-        // Custom icon for the first coordinate (flag.png)
+        // Custom icons
         var startIcon = L.icon({
             iconUrl: 'flag.png',
-            iconSize: [32, 32], // size of the icon
-            iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
-            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
 
-        // Custom icon for the last coordinate (college.png)
         var endIcon = L.icon({
             iconUrl: 'college.png',
-            iconSize: [32, 32], // size of the icon
-            iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
-            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
 
-        // Custom icon for myStop (myStop.png)
         var myStopIcon = L.icon({
             iconUrl: 'myStop.png',
-            iconSize: [32, 32], // size of the icon
-            iconAnchor: [16, 32], // point of the icon which will correspond to marker's location
-            popupAnchor: [0, -32] // point from which the popup should open relative to the iconAnchor
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
         });
 
-        // Add custom markers for the first, last, and specific coordinates
+        var busIcon = L.icon({
+            iconUrl: 'busMain.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+            popupAnchor: [0, -32]
+        });
+
+        // Add custom markers for the first, last, specific coordinates, and bus
         var startMarker = L.marker(coordinates[0], { icon: startIcon }).addTo(map);
         var endMarker = L.marker(coordinates[coordinates.length - 1], { icon: endIcon }).addTo(map);
-        var myStopMarker = L.marker([17.244027, 80.132636], { icon: myStopIcon }).addTo(map);
+        var myStopMarker = L.marker(mystop, { icon: myStopIcon }).addTo(map);
+
+        // Define the bus location
+        var busLocation = coordinates[3]; // Update with the actual bus location coordinates
+
+        // Add bus marker
+        var busMarker = L.marker(busLocation, { icon: busIcon }).addTo(map);
 
         // Fit the map to the polyline bounds
-        map.fitBounds(polyline.getBounds());
+        // map.fitBounds(polyline.getBounds());
+        // Fit the map to the polyline bounds with a 10% padding
+        map.fitBounds(polyline.getBounds(), { padding: [15, 15] });
+
 
         // Add click event listeners to center the map on the marker when clicked
         startMarker.on('click', function () {
@@ -190,13 +204,16 @@
             map.setView(mystop, 20);
         });
 
+        busMarker.on('click', function () {
+            map.setView(busMarker.getLatLng(), 20);
+        });
+
         // Calculate distance between two points
         function calculateDistance(lat1, lon1, lat2, lon2) {
             var R = 6371; // Radius of the earth in km
-            var dLat = deg2rad(lat2 - lat1);  // deg2rad below
+            var dLat = deg2rad(lat2 - lat1);
             var dLon = deg2rad(lon2 - lon1);
-            var a =
-                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
                 Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
                 Math.sin(dLon / 2) * Math.sin(dLon / 2);
             var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
@@ -208,12 +225,12 @@
             return deg * (Math.PI / 180)
         }
 
-        // Calculate distance between mystop and coordinates[0]
-        var distance = calculateDistance(mystop[0], mystop[1], coordinates[0][0], coordinates[0][1]);
+        // Calculate distance and time between busLocation and mystop
+        var distance = calculateDistance(busLocation[0], busLocation[1], mystop[0], mystop[1]);
         document.getElementById('distance').innerText = distance + ' km';
 
-        // Calculate time taken from coordinates[0] to mystop at 30 km/h
-        var time = (distance / 30) * 60; // Time in minutes
+        var speed = 30; // Speed in km/h
+        var time = (distance / speed) * 60; // Time in minutes
         document.getElementById('time').innerText = time.toFixed(2) + ' min';
 
         // Add click event listener to the refresh button
