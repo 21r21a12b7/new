@@ -89,15 +89,15 @@
         <div id="info-panel">
             <div class="info-item">
                 <img src="img/distance.png" alt="Distance">
-                <span id="distance">30.55 km</span>
+                <span id="distance"></span>
             </div>
             <div class="info-item">
                 <img src="img/time.png" alt="Time">
-                <span id="time">2hr 5min</span>
+                <span id="time"></span>
             </div>
             <div class="info-item">
                 <img src="img/speed.png" alt="Speed">
-                <span id="speed">30 km/h</span>
+                <span id="speed">10 kmph</span>
             </div>
         </div>
         <img id="refresh-button" src="img/refresh.png" alt="Refresh">
@@ -229,7 +229,7 @@
         var distance = calculateDistance(busLocation[0], busLocation[1], mystop[0], mystop[1]);
         document.getElementById('distance').innerText = distance + ' km';
 
-        var speed = 30; // Speed in km/h
+        var speed = 10; // Speed in km/h
         var time = (distance / speed) * 60; // Time in minutes
         document.getElementById('time').innerText = time.toFixed(2) + ' min';
 
