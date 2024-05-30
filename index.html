@@ -208,7 +208,7 @@
         });
 
         busMarker.on('click', function () {
-            map.setView(coordinates[0], 20);
+            map.setView(busMarker.getLatLng(), 20);
         });
 
         // Speed variable
