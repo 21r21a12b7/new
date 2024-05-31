@@ -178,7 +178,7 @@
                 var busLocation = coordinates[3];
 
                 // Define the mystop location
-                var mystoplocation = coordinates[8];
+                var mystoplocation = coordinates[coordinates.length-10];
 
                 // Add custom markers for the first, last, specific coordinates, and bus
                 var startMarker = L.marker(coordinates[0], { icon: startIcon }).addTo(map);
@@ -208,7 +208,7 @@
                 });
 
                 myStopMarker.on('click', function () {
-                    map.setView(coordinates[8], 20);
+                    map.setView(mystoplocation, 20);
                 });
 
                 busMarker.on('click', function () {
